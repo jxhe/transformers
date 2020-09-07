@@ -1009,6 +1009,9 @@ class Trainer:
                 preds = self.distributed_concat(preds, num_total_examples=self.num_examples(dataloader))
             if label_ids is not None:
                 label_ids = self.distributed_concat(label_ids, num_total_examples=self.num_examples(dataloader))
+            if eval_losses is not None:
+                eval_losses = self.distributed_concat(torch.tensor(eval_losses).sum(),
+                        num_total_examples=torch.distributed.get_world_size()).tolist()
         elif is_torch_tpu_available():
             # tpu-comment: Get all predictions and labels from all worker shards of eval dataset
             if preds is not None:
